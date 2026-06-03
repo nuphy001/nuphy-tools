@@ -1,0 +1,145 @@
+.radial-menu-holder {
+  position: fixed;
+  z-index: 9999;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.radial-menu-holder.is-open {
+  pointer-events: auto;
+}
+
+.radial-menu-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transform-origin: center center;
+  transition:
+    transform 0.2s ease-out,
+    opacity 0.2s ease-out;
+}
+
+.radial-menu-svg foreignObject {
+  overflow: visible;
+}
+
+.radial-menu-sector-btn svg,
+.radial-menu-close-icon {
+  display: block;
+  flex-shrink: 0;
+}
+
+.radial-menu-holder:not(.is-open) .radial-menu-svg {
+  transform: scale(0.72) rotate(-8deg);
+  opacity: 0;
+}
+
+.radial-menu-holder.is-open .radial-menu-svg {
+  transform: scale(1) rotate(0deg);
+  opacity: 1;
+}
+
+.radial-menu-sector {
+  cursor: pointer;
+}
+
+.radial-menu-sector.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.radial-menu-wedge {
+  cursor: pointer;
+  transition: fill 0.05s ease-out;
+}
+
+.radial-menu-wedge--outer {
+  fill: transparent;
+}
+
+.radial-menu-sector.is-hovered .radial-menu-wedge--outer {
+  fill: #141414;
+}
+
+.radial-menu-wedge--inner {
+  fill: #0a0a0a;
+  stroke: rgba(255, 255, 255, 0.6);
+  stroke-width: 0.5px;
+}
+
+.radial-menu-sector.is-hovered .radial-menu-wedge--inner {
+  fill: #1a1a1a;
+}
+
+.radial-menu-sector-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 9999px;
+  background: transparent;
+  color: #fff;
+  outline: none;
+  cursor: pointer;
+}
+
+.radial-menu-sector-btn:disabled {
+  cursor: not-allowed;
+}
+
+.radial-menu-sector.is-hovered:not(.is-disabled) .radial-menu-sector-btn {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.radial-menu-sector-label {
+  margin-top: 4px;
+  max-width: 100%;
+  transform: scale(0.9);
+  text-align: center;
+  font-weight: 500;
+  line-height: 1;
+  color: inherit;
+}
+
+.radial-menu-close-bg {
+  pointer-events: none;
+  stroke-width: 1px;
+  opacity: 0.5;
+}
+
+.radial-menu-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 9999px;
+  outline: none;
+  cursor: pointer;
+  background: linear-gradient(180deg, #d6f54a 0%, #c5ea2c 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.12),
+    0 2px 4px rgba(0, 0, 0, 0.08);
+  transition:
+    background-color 0.15s ease-out,
+    color 0.15s ease-out;
+}
+
+.radial-menu-close-icon {
+  width: 24px;
+  height: 24px;
+}

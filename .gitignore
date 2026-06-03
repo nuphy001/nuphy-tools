@@ -1,0 +1,9 @@
+.env
+.env.*
+!.env.example
+.output
+.wxt
+node_modules
+dist
+.cursor
+.DS_Store
