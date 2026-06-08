@@ -29,13 +29,22 @@ export function getStorefrontResource(url: URL, doc: Document = document): Store
   }
 
   const segments = url.pathname.split('/').filter(Boolean);
-  const [firstSegment, secondSegment] = segments;
+  const [firstSegment, secondSegment, thirdSegment, fourthSegment] = segments;
 
   if (!firstSegment) {
     return { kind: 'page', handle: APP_CONFIG.shopify.defaultPageHandle };
   }
 
   if (firstSegment === APP_CONFIG.routes.collectionsSegment) {
+    // Same product page as /products/{handle}; only the URL shape differs.
+    if (
+      secondSegment &&
+      thirdSegment === APP_CONFIG.routes.productsSegment &&
+      fourthSegment
+    ) {
+      return { kind: 'product', handle: fourthSegment };
+    }
+
     return { kind: 'collection', handle: secondSegment || '' };
   }
 

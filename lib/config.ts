@@ -5,7 +5,11 @@ export const APP_CONFIG = {
     allowedOrigins: ['https://nuphy.com', 'https://vercel.nuphyio.com'],
     /** Injected on http(s) pages; UI mounts only on allowed origins or `site:brand` meta. */
     contentMatches: ['https://*/*', 'http://*/*'],
-    hostPermissions: ['https://nuphy.com/*', 'https://vercel.nuphyio.com/*'],
+    hostPermissions: [
+      'https://nuphy.com/*',
+      'https://vercel.nuphyio.com/*',
+      'https://nuphy-store.myshopify.com/*',
+    ],
     brandMeta: {
       name: 'site:brand',
       value: 'Nuphy',
@@ -13,7 +17,7 @@ export const APP_CONFIG = {
   },
   shopify: {
     storeAdminBaseUrl: 'https://admin.shopify.com/store/nuphy-store',
-    storefrontBaseUrl: 'https://nuphy.com',
+    storefrontBaseUrl: 'https://nuphy-store.myshopify.com',
     storefrontApiVersion: import.meta.env.WXT_SHOPIFY_STOREFRONT_API_VERSION || '2025-04',
     defaultPageHandle: 'home',
   },

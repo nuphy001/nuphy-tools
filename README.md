@@ -35,7 +35,7 @@
 
    `content` 与 `Nuphy` 比较时不区分大小写，便于 Vercel 预览等环境使用。
 
-> Storefront API 请求固定发往生产域名 `nuphy.com`，与当前浏览器地址栏域名无关。
+> Storefront API 请求固定发往 `nuphy-store.myshopify.com`（Headless 前台 `nuphy.com` 不提供 `/api/*/graphql.json`），与当前浏览器地址栏域名无关。
 
 ## 快速开始
 
@@ -82,6 +82,7 @@ Firefox：`npm run dev:firefox` / `npm run build:firefox` / `npm run zip:firefox
 | `/`（首页） | 页面 | `home` |
 | `/pages/{slug}` | 页面 | `about-us` |
 | `/products/{slug}` | 产品 | `nuphy-air75-v3` |
+| `/collections/{collection}/products/{slug}` | 产品（与 `/products/{slug}` 同页） | `nuphy-node-series-low-profile` |
 | `/collections/{slug}` | 集合（Page/Metafields 禁用） | `switches` |
 | 其它路径 | 不支持 Page/Metafields | — |
 
@@ -91,12 +92,12 @@ Firefox：`npm run dev:firefox` / `npm run build:firefox` / `npm run zip:firefox
 
 - 首页 → `.../pages/{pageId}`（handle：`home`）
 - `/pages/*` → `.../pages/{pageId}`
-- `/products/*` → `.../products/{productId}`（产品页也走 Page 项，进入产品 Admin）
+- `/products/*` 或 `/collections/*/products/*` → `.../products/{productId}`（产品页也走 Page 项，进入产品 Admin）
 
 **Metafields**（需配置 Token）
 
 - 首页或 `/pages/*` → `.../apps/metafields-cms/pages/{pageId}`
-- `/products/*` → `.../apps/metafields-cms/products/{productId}`
+- `/products/*` 或 `/collections/*/products/*` → `.../apps/metafields-cms/products/{productId}`
 
 **Admin** → `https://admin.shopify.com/store/nuphy-store`
 
@@ -136,7 +137,8 @@ lib/
 
 **预览站可用但 API 失败**
 
-- API 始终请求 `nuphy.com` 的 Storefront；Token 需对该店有效，与预览域名无关
+- API 始终请求 `nuphy-store.myshopify.com` 的 Storefront GraphQL；Token 需对该店有效，与预览域名无关
+- 若报错为 HTTP 404，多半是 API 域名误配为 `nuphy.com`（Headless 站点无 Storefront 端点）
 
 ## 相关文档
 

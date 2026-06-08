@@ -82,6 +82,7 @@
 | 首页 `/` | `home` | ✅ | ✅ |
 | `/pages/{slug}` | slug | ✅ | ✅ |
 | `/products/{slug}` | slug | ✅（产品进 products Admin） | ✅ |
+| `/collections/{collection}/products/{slug}` | slug | ✅（同 `/products/{slug}`） | ✅ |
 | `/collections/{slug}` | slug | ❌ 禁用 | ✅ |
 | 其它 | — | ❌ 禁用 | — |
 
