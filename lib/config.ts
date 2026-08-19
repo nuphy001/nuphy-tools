@@ -35,6 +35,8 @@ export const APP_CONFIG = {
       'https://dev.nuphy.com/*',
       'https://nuphy-store.myshopify.com/*',
       'https://nuphyx.myshopify.com/*',
+      'https://pay.nuphy.com/*',
+      'https://us.nuphyx.com/*',
     ],
     brandMeta: {
       name: 'site:brand',

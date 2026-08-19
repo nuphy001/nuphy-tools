@@ -41,8 +41,14 @@ export async function resolveShopifyResource(
 ): Promise<ResolveShopifyResourceResponse> {
   const profile = getStoreProfile(message.storeKey);
 
-  const response = await fetch(buildStorefrontGraphqlUrl(profile), {
+  if (!profile) {
+    return { ok: false, error: `Unknown store "${String(message.storeKey)}".` };
+  }
+
+  const url = buildStorefrontGraphqlUrl(profile);
+  const response = await fetch(url, {
     method: 'POST',
+    credentials: 'omit',
     headers: {
       'Content-Type': 'application/json',
       'X-Shopify-Storefront-Access-Token': profile.storefrontAccessToken,
@@ -54,9 +60,10 @@ export async function resolveShopifyResource(
   });
 
   if (!response.ok) {
+    const statusText = response.statusText?.trim() ?? '';
     return {
       ok: false,
-      error: `Storefront API request failed: ${response.status} ${response.statusText}`,
+      error: `Storefront API request failed: ${response.status}${statusText ? ` ${statusText}` : ''} (${url})`,
     };
   }
 
