@@ -13,6 +13,10 @@ import {
   buildProductAdminUrl,
   buildProductMetafieldsUrl,
   buildShopMetafieldsUrl,
+  resolveStoreKey,
+  resolveStoreProfile,
+  type StoreKey,
+  type StoreProfile,
 } from '../lib/config';
 import type {
   ResolveShopifyResourceMessage,
@@ -67,11 +71,24 @@ function isEditableTarget(target: EventTarget | null) {
   );
 }
 
-async function resolveResource(resource: ShopifyResourceKind, handle: string) {
+function getCurrentStore() {
+  const origin = window.location.origin;
+  return {
+    storeKey: resolveStoreKey(origin),
+    profile: resolveStoreProfile(origin),
+  };
+}
+
+async function resolveResource(
+  resource: ShopifyResourceKind,
+  handle: string,
+  storeKey: StoreKey,
+) {
   const message: ResolveShopifyResourceMessage = {
     type: 'resolve-shopify-resource',
     resource,
     handle,
+    storeKey,
   };
 
   return browser.runtime.sendMessage(message) as Promise<ResolveShopifyResourceResponse>;
@@ -149,11 +166,12 @@ function NuphyToolsApp({ portalContainer }: { portalContainer: HTMLElement }) {
     async (
       itemId: Extract<ShortcutAction, 'page' | 'metafields'>,
       resource: Exclude<StorefrontResource, { kind: 'collection' | 'unsupported' }>,
+      store: { storeKey: StoreKey; profile: StoreProfile },
     ) => {
       setBusy(itemId);
       setError(null);
 
-      const response = await resolveResource(resource.kind, resource.handle);
+      const response = await resolveResource(resource.kind, resource.handle, store.storeKey);
 
       if (!response.ok) {
         setError(response.error);
@@ -164,11 +182,11 @@ function NuphyToolsApp({ portalContainer }: { portalContainer: HTMLElement }) {
       const url =
         itemId === 'page'
           ? resource.kind === 'page'
-            ? buildPageAdminUrl(response.id)
-            : buildProductAdminUrl(response.id)
+            ? buildPageAdminUrl(store.profile, response.id)
+            : buildProductAdminUrl(store.profile, response.id)
           : resource.kind === 'page'
-            ? buildPageMetafieldsUrl(response.id)
-            : buildProductMetafieldsUrl(response.id);
+            ? buildPageMetafieldsUrl(store.profile, response.id)
+            : buildProductMetafieldsUrl(store.profile, response.id);
 
       const openResponse = await openUrl(url);
       if (!openResponse.ok) {
@@ -189,10 +207,12 @@ function NuphyToolsApp({ portalContainer }: { portalContainer: HTMLElement }) {
       if (!action || item.disabled || busy) return;
 
       setError(null);
-      const resource = getStorefrontResource(new URL(window.location.href));
+      const pageUrl = new URL(window.location.href);
+      const resource = getStorefrontResource(pageUrl);
+      const store = getCurrentStore();
 
       if (action === 'admin') {
-        const response = await openUrl(buildAdminHomeUrl());
+        const response = await openUrl(buildAdminHomeUrl(store.profile));
         if (!response.ok) {
           setError(response.error);
           return;
@@ -202,7 +222,7 @@ function NuphyToolsApp({ portalContainer }: { portalContainer: HTMLElement }) {
       }
 
       if (action === 'shop') {
-        const response = await openUrl(buildShopMetafieldsUrl());
+        const response = await openUrl(buildShopMetafieldsUrl(store.profile));
         if (!response.ok) {
           setError(response.error);
           return;
@@ -212,7 +232,7 @@ function NuphyToolsApp({ portalContainer }: { portalContainer: HTMLElement }) {
       }
 
       if (action === 'files') {
-        const response = await openUrl(buildFilesAdminUrl());
+        const response = await openUrl(buildFilesAdminUrl(store.profile));
         if (!response.ok) {
           setError(response.error);
           return;
@@ -246,7 +266,7 @@ function NuphyToolsApp({ portalContainer }: { portalContainer: HTMLElement }) {
         return;
       }
 
-      const ok = await goToResource(action, resource);
+      const ok = await goToResource(action, resource, store);
       if (ok) menuRef.current?.close();
     },
     [busy, goToResource],

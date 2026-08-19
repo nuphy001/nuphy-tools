@@ -25,9 +25,9 @@
 
 扩展仅在以下页面挂载并响应双击：
 
-1. [https://nuphy.com](https://nuphy.com)
-2. [https://vercel.nuphyio.com](https://vercel.nuphyio.com)
-3. 任意包含品牌标识的页面：
+1. [https://nuphy.com](https://nuphy.com) → 正式店 `nuphy-store`
+2. [https://dev.nuphy.com](https://dev.nuphy.com) → 测试店 `nuphyx`
+3. 任意包含品牌标识的页面（默认正式店）：
 
    ```html
    <meta name="site:brand" content="Nuphy" />
@@ -35,7 +35,7 @@
 
    `content` 与 `Nuphy` 比较时不区分大小写，便于 Vercel 预览等环境使用。
 
-> Storefront API 请求固定发往 `nuphy-store.myshopify.com`（Headless 前台 `nuphy.com` 不提供 `/api/*/graphql.json`），与当前浏览器地址栏域名无关。
+> Admin 链接与 Storefront API 按当前页 origin 选择店铺：`dev.nuphy.com` 走 `nuphyx.myshopify.com`，其余默认走 `nuphy-store.myshopify.com`（Headless 前台本身不提供 `/api/*/graphql.json`）。
 
 ## 快速开始
 
@@ -45,18 +45,9 @@
 npm install
 ```
 
-### 2. 配置环境变量
+### 2. 店铺 Token（可选核对）
 
-复制示例文件并填写 Storefront Access Token：
-
-```bash
-cp .env.example .env
-```
-
-| 变量 | 说明 |
-| --- | --- |
-| `WXT_SHOPIFY_STOREFRONT_TOKEN` | **必填**。用于 Background 调用 Shopify Storefront GraphQL |
-| `WXT_SHOPIFY_STOREFRONT_API_VERSION` | 可选，默认 `2025-04`（见 `lib/config.ts`） |
+Public Storefront Access Token 写在 [`lib/config.ts`](lib/config.ts) 的 `STORE_PROFILES.*.storefrontAccessToken`，API 版本在 `APP_CONFIG.shopify.storefrontApiVersion`。
 
 ### 3. 开发调试
 
@@ -99,7 +90,7 @@ Firefox：`npm run dev:firefox` / `npm run build:firefox` / `npm run zip:firefox
 - 首页或 `/pages/*` → `.../apps/metafields-cms/pages/{pageId}`
 - `/products/*` 或 `/collections/*/products/*` → `.../apps/metafields-cms/products/{productId}`
 
-**Admin** → `https://admin.shopify.com/store/nuphy-store`
+**Admin** → 正式站 `https://admin.shopify.com/store/nuphy-store`；`dev.nuphy.com` → `.../store/nuphyx`
 
 **Shop** → `.../apps/metafields-cms/shop`
 
@@ -132,13 +123,13 @@ lib/
 
 **Page / Metafields 报错**
 
-- 确认 `.env` 中已设置有效的 `WXT_SHOPIFY_STOREFRONT_TOKEN`
+- 确认 `lib/config.ts` 里对应店铺的 `storefrontAccessToken` 已填写
 - 确认当前 URL 能解析出 page/product handle（集合页不支持这两项）
 
 **预览站可用但 API 失败**
 
-- API 始终请求 `nuphy-store.myshopify.com` 的 Storefront GraphQL；Token 需对该店有效，与预览域名无关
-- 若报错为 HTTP 404，多半是 API 域名误配为 `nuphy.com`（Headless 站点无 Storefront 端点）
+- Storefront GraphQL 按 origin 切店：正式站 / brand-meta 预览默认 `nuphy-store.myshopify.com`，`dev.nuphy.com` 走 `nuphyx.myshopify.com`；Token 需对应店铺有效
+- 若报错为 HTTP 404，多半是 API 域名误配为 Headless 前台域名（无 Storefront 端点）
 
 ## 相关文档
 

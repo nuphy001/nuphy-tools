@@ -1,9 +1,12 @@
+import type { StoreKey } from './config';
+
 export type ShopifyResourceKind = 'page' | 'product';
 
 export type ResolveShopifyResourceMessage = {
   type: 'resolve-shopify-resource';
   resource: ShopifyResourceKind;
   handle: string;
+  storeKey: StoreKey;
 };
 
 export type OpenUrlMessage = {

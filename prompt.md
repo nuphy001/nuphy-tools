@@ -17,7 +17,7 @@
 扩展只在以下页面工作（其它页面不挂载、不响应双击）：
 
 1. `https://nuphy.com`
-2. `https://vercel.nuphyio.com`
+2. `https://dev.nuphy.com`
 3. 任意页面若包含：`<meta name="site:brand" content="Nuphy" />`（`content` 与 `Nuphy` 比较不区分大小写，便于预览环境）
 
 在输入框、文本域、`contenteditable` 等可编辑区域内双击 **不要** 弹出菜单。
@@ -116,7 +116,7 @@ API 查 id：首页 handle 为 `home`；其余从路径解析。查不到或缺 
 
 ## 自测验收
 
-- 在 `nuphy.com`、`vercel.nuphyio.com`、带品牌 meta 的预览页：双击空白处出现 6 项菜单
+- 在 `nuphy.com`、`dev.nuphy.com`、带品牌 meta 的预览页：双击空白处出现 6 项菜单
 - 菜单外点击 / Esc / 中心按钮可关闭
 - 各按钮跳转与 Copy 行为符合上表
 - `/collections/*` 上 Page、Metafields 为灰色不可点，Copy 仍可用

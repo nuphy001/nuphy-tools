@@ -1,4 +1,4 @@
-import { buildStorefrontGraphqlUrl, APP_CONFIG } from './config';
+import { buildStorefrontGraphqlUrl, getStoreProfile } from './config';
 import { cleanGid, type GidType } from './gid';
 import type {
   ResolveShopifyResourceMessage,
@@ -36,27 +36,16 @@ type StorefrontGraphqlResponse = {
   errors?: Array<{ message?: string }>;
 };
 
-function getStorefrontAccessToken() {
-  return import.meta.env.WXT_SHOPIFY_STOREFRONT_TOKEN || '';
-}
-
 export async function resolveShopifyResource(
   message: ResolveShopifyResourceMessage,
 ): Promise<ResolveShopifyResourceResponse> {
-  const token = getStorefrontAccessToken();
+  const profile = getStoreProfile(message.storeKey);
 
-  if (!token) {
-    return {
-      ok: false,
-      error: 'Missing WXT_SHOPIFY_STOREFRONT_TOKEN in extension environment.',
-    };
-  }
-
-  const response = await fetch(buildStorefrontGraphqlUrl(), {
+  const response = await fetch(buildStorefrontGraphqlUrl(profile), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': token,
+      'X-Shopify-Storefront-Access-Token': profile.storefrontAccessToken,
     },
     body: JSON.stringify({
       query: QUERY_BY_RESOURCE[message.resource],
