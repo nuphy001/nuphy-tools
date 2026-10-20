@@ -27,7 +27,8 @@
 
 1. [https://nuphy.com](https://nuphy.com) → 正式店 `nuphy-store`
 2. [https://dev.nuphy.com](https://dev.nuphy.com) → 测试店 `nuphyx`
-3. 任意包含品牌标识的页面（默认正式店）：
+3. [https://jp.nuphy.com](https://jp.nuphy.com) → 日本店 `nuphy-japan`
+4. 任意包含品牌标识的页面（默认正式店）：
 
    ```html
    <meta name="site:brand" content="Nuphy" />
@@ -35,7 +36,7 @@
 
    `content` 与 `Nuphy` 比较时不区分大小写，便于 Vercel 预览等环境使用。
 
-> Admin 链接与 Storefront API 按当前页 origin 选择店铺：`dev.nuphy.com` 走 `nuphyx.myshopify.com`，其余默认走 `nuphy-store.myshopify.com`（Headless 前台本身不提供 `/api/*/graphql.json`）。
+> Admin 链接与 Storefront API 按当前页 origin 选择店铺：`dev.nuphy.com` 走 `nuphyx.myshopify.com`，`jp.nuphy.com` 走 `nuphy-japan.myshopify.com`，其余默认走 `nuphy-store.myshopify.com`（Headless 前台本身不提供 `/api/*/graphql.json`）。
 
 ## 快速开始
 
@@ -48,6 +49,8 @@ npm install
 ### 2. 店铺 Token（可选核对）
 
 Public Storefront Access Token 写在 [`lib/config.ts`](lib/config.ts) 的 `STORE_PROFILES.*.storefrontAccessToken`，API 版本在 `APP_CONFIG.shopify.storefrontApiVersion`。
+
+Token 为可选项：未配置时（当前 `japan`）走 Shopify 无 Token 的 Storefront API 访问，page / product 查询可用。需要时在店铺后台安装 Headless 渠道获取 public access token 后补上即可。
 
 ### 3. 开发调试
 
@@ -79,18 +82,18 @@ Firefox：`npm run dev:firefox` / `npm run build:firefox` / `npm run zip:firefox
 
 ### 各按钮跳转逻辑
 
-**Page**（需配置 Token）
+**Page**
 
 - 首页 → `.../pages/{pageId}`（handle：`home`）
 - `/pages/*` → `.../pages/{pageId}`
 - `/products/*` 或 `/collections/*/products/*` → `.../products/{productId}`（产品页也走 Page 项，进入产品 Admin）
 
-**Metafields**（需配置 Token）
+**Metafields**
 
 - 首页或 `/pages/*` → `.../apps/metafields-cms/pages/{pageId}`
 - `/products/*` 或 `/collections/*/products/*` → `.../apps/metafields-cms/products/{productId}`
 
-**Admin** → 正式站 `https://admin.shopify.com/store/nuphy-store`；`dev.nuphy.com` → `.../store/nuphyx`
+**Admin** → 正式站 `https://admin.shopify.com/store/nuphy-store`；`dev.nuphy.com` → `.../store/nuphyx`；`jp.nuphy.com` → `.../store/nuphy-japan`
 
 **Shop** → `.../apps/metafields-cms/shop`
 
@@ -123,12 +126,12 @@ lib/
 
 **Page / Metafields 报错**
 
-- 确认 `lib/config.ts` 里对应店铺的 `storefrontAccessToken` 已填写
+- 若对应店铺配置了 `storefrontAccessToken`，确认其有效（未配置则走无 Token 访问）
 - 确认当前 URL 能解析出 page/product handle（集合页不支持这两项）
 
 **预览站可用但 API 失败**
 
-- Storefront GraphQL 按 origin 切店：正式站 / brand-meta 预览默认 `nuphy-store.myshopify.com`，`dev.nuphy.com` 走 `nuphyx.myshopify.com`；Token 需对应店铺有效
+- Storefront GraphQL 按 origin 切店：正式站 / brand-meta 预览默认 `nuphy-store.myshopify.com`，`dev.nuphy.com` 走 `nuphyx.myshopify.com`，`jp.nuphy.com` 走 `nuphy-japan.myshopify.com`；Token 需对应店铺有效
 - 若报错为 HTTP 404，多半是 API 域名误配为 Headless 前台域名（无 Storefront 端点）
 
 ## 相关文档

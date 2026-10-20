@@ -51,7 +51,9 @@ export async function resolveShopifyResource(
     credentials: 'omit',
     headers: {
       'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': profile.storefrontAccessToken,
+      ...(profile.storefrontAccessToken
+        ? { 'X-Shopify-Storefront-Access-Token': profile.storefrontAccessToken }
+        : {}),
     },
     body: JSON.stringify({
       query: QUERY_BY_RESOURCE[message.resource],

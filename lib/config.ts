@@ -1,3 +1,11 @@
+export type StoreProfile = {
+  storeHandle: string;
+  storeAdminBaseUrl: string;
+  storefrontBaseUrl: string;
+  /** Public Storefront API access token; omit to use tokenless access (pages/products are readable without one). */
+  storefrontAccessToken?: string;
+};
+
 export const STORE_PROFILES = {
   production: {
     storeHandle: 'nuphy-store',
@@ -13,28 +21,36 @@ export const STORE_PROFILES = {
     /** Public Storefront API access token */
     storefrontAccessToken: '50ebe48673548c659c22e42e3d75ffc7',
   },
-} as const;
+  japan: {
+    storeHandle: 'nuphy-japan',
+    storeAdminBaseUrl: 'https://admin.shopify.com/store/nuphy-japan',
+    storefrontBaseUrl: 'https://nuphy-japan.myshopify.com',
+    // No storefront token: uses Shopify tokenless Storefront API access.
+  },
+} as const satisfies Record<string, StoreProfile>;
 
 export type StoreKey = keyof typeof STORE_PROFILES;
-export type StoreProfile = (typeof STORE_PROFILES)[StoreKey];
 
 const ORIGIN_STORE_MAP: Record<string, StoreKey> = {
   'https://nuphy.com': 'production',
   'https://dev.nuphy.com': 'dev',
+  'https://jp.nuphy.com': 'japan',
 };
 
 export const APP_CONFIG = {
   extension: {
     name: 'NuPhy Tools',
     description: 'Radial shortcuts for NuPhy storefront and Shopify admin workflows.',
-    allowedOrigins: ['https://nuphy.com', 'https://dev.nuphy.com'],
+    allowedOrigins: ['https://nuphy.com', 'https://dev.nuphy.com', 'https://jp.nuphy.com'],
     /** Injected on http(s) pages; UI mounts only on allowed origins or `site:brand` meta. */
     contentMatches: ['https://*/*', 'http://*/*'],
     hostPermissions: [
       'https://nuphy.com/*',
       'https://dev.nuphy.com/*',
+      'https://jp.nuphy.com/*',
       'https://nuphy-store.myshopify.com/*',
       'https://nuphyx.myshopify.com/*',
+      'https://nuphy-japan.myshopify.com/*',
       'https://pay.nuphy.com/*',
       'https://us.nuphyx.com/*',
     ],
@@ -64,7 +80,7 @@ export function resolveStoreProfile(origin: string): StoreProfile {
   return STORE_PROFILES[resolveStoreKey(origin)];
 }
 
-export function getStoreProfile(storeKey: StoreKey): StoreProfile {
+export function getStoreProfile(storeKey: StoreKey): StoreProfile | undefined {
   return STORE_PROFILES[storeKey];
 }
 
